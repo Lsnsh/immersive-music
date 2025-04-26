@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Meteor } from '@/types/starry-sky';
 
@@ -14,12 +14,15 @@ const Meteors: React.FC<MeteorsProps> = ({ meteors, onMeteorComplete }) => {
         meteor.active && (
           <motion.div
             key={`meteor-${meteor.id}`}
-            className="absolute will-change-transform"
+            className="absolute"
             style={{
               left: `${meteor.startX}%`,
               top: `${meteor.startY}%`,
               width: '1px',
               height: '1px',
+              zIndex: 10,
+              willChange: 'transform, opacity',
+              transform: 'translateZ(0)',
             }}
             initial={{ opacity: 0 }}
             animate={{ 
@@ -42,6 +45,7 @@ const Meteors: React.FC<MeteorsProps> = ({ meteors, onMeteorComplete }) => {
                 height: '2px',
                 transformOrigin: 'left center',
                 transform: 'rotate(45deg)',
+                filter: 'blur(0.5px)',
               }}
             />
           </motion.div>
@@ -51,4 +55,4 @@ const Meteors: React.FC<MeteorsProps> = ({ meteors, onMeteorComplete }) => {
   );
 };
 
-export default Meteors; 
+export default memo(Meteors); 

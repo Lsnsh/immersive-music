@@ -4,7 +4,10 @@ import { Star, Meteor } from '@/types/starry-sky';
 export const useStarrySky = () => {
   const [stars, setStars] = useState<Star[]>([]);
   const [meteors, setMeteors] = useState<Meteor[]>([]);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [dimensions, setDimensions] = useState(() => ({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1920,
+    height: typeof window !== 'undefined' ? window.innerHeight : 1080
+  }));
   const initialized = useRef(false);
 
   // 生成星星
@@ -13,13 +16,12 @@ export const useStarrySky = () => {
     if (initialized.current) return;
     initialized.current = true;
     
-    // 立即创建一些星星，无需等待DOM挂载完成
+    // 立即创建一些星星
     const generateInitialStars = () => {
-      // 使用屏幕尺寸作为初始尺寸
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      // 使用当前dimensions值
+      const { width, height } = dimensions;
       
-      // 增加星星数量，基于尺寸计算但更密集
+      // 增加星星数量，让星空更密集
       const starCount = Math.floor((width * height) / 600);
       const initialStars: Star[] = [];
       
@@ -28,19 +30,19 @@ export const useStarrySky = () => {
           id: i,
           x: Math.random() * 100, // 使用百分比
           y: Math.random() * 100, // 使用百分比
-          size: Math.random() * 2 + 0.5, // 0.5-2.5px
+          size: Math.random() * 2 + 0.8, // 0.8-2.8px，增加大小
           opacity: Math.random() * 0.5 + 0.5, // 0.5-1
           blinkDuration: Math.random() * 3 + 2, // 2-5秒
         });
       }
       
       setStars(initialStars);
-      setDimensions({ width, height });
     };
     
-    // 确保在DOM挂载后执行
+    // 确保在DOM挂载后立即执行
     if (typeof window !== 'undefined') {
-      generateInitialStars();
+      // 使用setTimeout确保DOM已经挂载
+      setTimeout(generateInitialStars, 0);
     }
     
     // 浏览器调整大小时更新星星数量
@@ -49,35 +51,41 @@ export const useStarrySky = () => {
       const height = window.innerHeight;
       setDimensions({ width, height });
       
-      // 更新星星数量
+      // 更新星星数量，保证在任何屏幕尺寸上都有足够的星星
       const starCount = Math.floor((width * height) / 600);
       
-      // 如果当前星星数不足，添加更多
-      if (stars.length < starCount) {
-        const newStars = [...stars];
-        for (let i = stars.length; i < starCount; i++) {
-          newStars.push({
-            id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            size: Math.random() * 2 + 0.5,
-            opacity: Math.random() * 0.5 + 0.5,
-            blinkDuration: Math.random() * 3 + 2,
-          });
+      setStars(prevStars => {
+        if (prevStars.length < starCount) {
+          // 如果当前星星数不足，添加更多
+          const newStars = [...prevStars];
+          for (let i = prevStars.length; i < starCount; i++) {
+            newStars.push({
+              id: i,
+              x: Math.random() * 100,
+              y: Math.random() * 100,
+              size: Math.random() * 2 + 0.8,
+              opacity: Math.random() * 0.5 + 0.5,
+              blinkDuration: Math.random() * 3 + 2,
+            });
+          }
+          return newStars;
+        } else if (prevStars.length > starCount * 1.5) {
+          // 如果星星太多，减少一些
+          return prevStars.slice(0, starCount);
         }
-        setStars(newStars);
-      }
+        return prevStars;
+      });
     };
     
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
-  }, [stars.length]);
+  }, [dimensions]);
 
   // 生成流星
   useEffect(() => {
-    if (dimensions.width === 0 || typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     
     // 初始化流星数组
     const initialMeteors: Meteor[] = Array(5).fill(null).map((_, i) => ({
@@ -123,16 +131,16 @@ export const useStarrySky = () => {
     
     // 定时触发流星
     const interval = setInterval(() => {
-      // 增加概率到25%
-      if (Math.random() < 0.25) {
+      // 20%概率触发流星，优化性能
+      if (Math.random() < 0.2) {
         triggerMeteor();
       }
-    }, 2000);
+    }, 3000); // 延长间隔提高性能
     
     return () => {
       clearInterval(interval);
     };
-  }, [dimensions]);
+  }, []);
 
   // 处理流星完成动画
   const setMeteorsState = useCallback((meteorId: number) => {

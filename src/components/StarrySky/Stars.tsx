@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from '@/types/starry-sky';
 
@@ -12,13 +12,17 @@ const Stars: React.FC<StarsProps> = ({ stars }) => {
       {stars.map(star => (
         <motion.div
           key={star.id}
-          className="absolute rounded-full bg-white will-change-transform"
+          className="absolute rounded-full bg-white shadow-glow"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
+            willChange: 'opacity',
+            boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, ${star.opacity * 0.8})`,
+            zIndex: 5
           }}
+          initial={{ opacity: star.opacity }}
           animate={{
             opacity: [star.opacity, star.opacity * 0.3, star.opacity],
           }}
@@ -26,6 +30,7 @@ const Stars: React.FC<StarsProps> = ({ stars }) => {
             duration: star.blinkDuration,
             repeat: Infinity,
             ease: "easeInOut",
+            repeatType: "loop"
           }}
         />
       ))}
@@ -33,4 +38,4 @@ const Stars: React.FC<StarsProps> = ({ stars }) => {
   );
 };
 
-export default Stars; 
+export default memo(Stars); 
