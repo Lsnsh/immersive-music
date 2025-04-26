@@ -100,6 +100,34 @@ export const useMusicPlayer = ({ initialVolume = 0.5, autoplay = true }: MusicPl
         
         request.onsuccess = (event) => {
           const db = (event.target as IDBOpenDBRequest).result;
+          
+          // 检查对象存储是否存在
+          if (!db.objectStoreNames.contains('audio')) {
+            // 如果对象存储不存在，需要升级数据库版本来创建它
+            db.close();
+            const reopenRequest = indexedDB.open('AudioCache', 2); // 增加版本号触发onupgradeneeded
+            
+            reopenRequest.onupgradeneeded = (event) => {
+              const newDb = (event.target as IDBOpenDBRequest).result;
+              if (!newDb.objectStoreNames.contains('audio')) {
+                newDb.createObjectStore('audio');
+              }
+            };
+            
+            reopenRequest.onsuccess = (event) => {
+              const upgradedDb = (event.target as IDBOpenDBRequest).result;
+              const transaction = upgradedDb.transaction(['audio'], 'readwrite');
+              const store = transaction.objectStore('audio');
+              
+              // 使用音频URL作为键
+              store.put(arrayBuffer, src);
+              upgradedDb.close();
+            };
+            
+            return;
+          }
+          
+          // 如果对象存储存在，继续原来的操作
           const transaction = db.transaction(['audio'], 'readwrite');
           const store = transaction.objectStore('audio');
           
