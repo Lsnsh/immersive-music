@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import songs from '@/data/songs';
+import { useMusicPlayer } from '@/hooks/useMusicPlayer';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import PlayerControls from './PlayerControls';
+import Playlist from './Playlist';
 import ProgressBar from './ProgressBar';
 import VolumeControl from './VolumeControl';
-import Playlist from './Playlist';
-import { useMusicPlayer } from '@/hooks/useMusicPlayer';
-import songs from '@/data/songs';
 
 interface MusicPlayerProps {
   initialVolume?: number;
