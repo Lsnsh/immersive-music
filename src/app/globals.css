@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground: #ffffff;
+  --background: #000000;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* 音量滑块样式 */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.2);
+  height: 4px;
+  border-radius: 2px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -4px;
+  background-color: white;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+/* 隐藏滚动条但允许滚动 */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* 音乐条形动画 */
+@keyframes music-bar-1 {
+  0%, 100% { height: 10px; }
+  50% { height: 20px; }
+}
+
+@keyframes music-bar-2 {
+  0%, 100% { height: 16px; }
+  30% { height: 10px; }
+  60% { height: 16px; }
+  90% { height: 8px; }
+}
+
+@keyframes music-bar-3 {
+  0%, 100% { height: 8px; }
+  35% { height: 14px; }
+  70% { height: 10px; }
+}
+
+.animate-music-bar-1 {
+  animation: music-bar-1 1.2s ease-in-out infinite;
+}
+
+.animate-music-bar-2 {
+  animation: music-bar-2 1s ease-in-out infinite;
+}
+
+.animate-music-bar-3 {
+  animation: music-bar-3 0.8s ease-in-out infinite;
+}

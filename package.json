@@ -1,20 +1,49 @@
 {
   "name": "immersive-music",
   "version": "1.0.0",
-
+  "description": "沉浸式音乐播放器，带有动态星空背景",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lsnsh/immersive-music.git"
   },
-  "keywords": [],
+  "keywords": [
+    "nextjs",
+    "music-player",
+    "immersive",
+    "tailwindcss",
+    "starry-sky"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Lsnsh/immersive-music/issues"
   },
   "homepage": "https://github.com/Lsnsh/immersive-music#readme",
-  "description": ""
+  "dependencies": {
+    "framer-motion": "^12.9.2",
+    "howler": "^2.2.4",
+    "next": "15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "use-sound": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/howler": "^2.2.12",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
 }
