@@ -57,12 +57,12 @@ export default function Home() {
       {/* 星空背景 */}
       <StarrySky />
       
-      {/* 中央内容 */}
-      <div className="relative z-[1] flex flex-col items-center justify-center h-screen p-8">
+      {/* 中央内容 - 使用相对定位避免覆盖背景 */}
+      <div className="relative flex flex-col items-center justify-center h-screen p-8">
         {showStartButton ? (
           <button 
             onClick={handleStart}
-            className="bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full px-10 py-4 text-xl font-bold transition-all hover:bg-white/20"
+            className="bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full px-10 py-4 text-xl font-bold transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
           >
             开始体验
           </button>

@@ -1,22 +1,24 @@
 # 沉浸式音乐 Immersive Music
 
-一个基于Next.js和Tailwind CSS开发的沉浸式音乐播放器项目。
+一个基于Next.js和Tailwind CSS开发的沉浸式音乐播放器项目。点击这里体验 [在线演示](https://lsnsh.github.io/immersive-music/)
 
 ## 特点
 
 - 美丽的星空背景，含闪烁的星星和随机流星
 - 自动播放的音乐，初始音量为50%
-- 底部隐藏式音乐播放器控件
+- 底部隐藏式音乐播放器控件（Apple Music风格）
 - 可展开的播放控制面板，支持音量调节和进度控制
 - 响应式设计，适配各种设备
+- 本地缓存音乐文件，优化加载性能
 
 ## 技术栈
 
-- Next.js (最新版)
+- Next.js 15
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS 4
 - Framer Motion (动画效果)
 - Howler.js (音频处理)
+- IndexedDB (音频文件本地缓存)
 
 ## 当前场景
 
@@ -45,7 +47,29 @@ npm run build
 npm start
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+## 部署到GitHub Pages
+
+项目已配置好GitHub Pages部署流程，可以使用以下命令进行部署：
+
+```bash
+# 安装依赖
+npm install
+
+# 部署到GitHub Pages
+npm run deploy
+```
+
+这会自动构建项目并将生成的静态文件部署到gh-pages分支。
+
+## 性能优化
+
+项目实现了以下性能优化措施：
+
+1. **音频文件缓存**：使用IndexedDB将音频文件缓存到本地，减少重复下载
+2. **播放位置记忆**：记住用户上次播放的位置，下次访问时恢复
+3. **音量设置保存**：保存用户设置的音量，提供一致的用户体验
+4. **预加载下一首歌曲**：当播放当前歌曲时，自动预加载下一首歌曲
+5. **性能优化**：使用will-change和其他CSS优化提高动画性能
 
 ## 目录结构
 
@@ -58,6 +82,7 @@ npm start
 │   ├── components/      # 组件
 │   │   ├── MusicPlayer/ # 音乐播放器组件
 │   │   └── StarrySky/   # 星空背景组件
+│   ├── data/            # 数据文件
 │   └── types/           # 类型定义
 └── package.json         # 项目配置
 ```

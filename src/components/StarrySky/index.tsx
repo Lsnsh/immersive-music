@@ -43,7 +43,7 @@ const StarrySky: React.FC = () => {
       const height = window.innerHeight;
       
       // 增加星星数量，基于尺寸计算但更密集
-      const starCount = Math.floor((width * height) / 800);
+      const starCount = Math.floor((width * height) / 600);
       const initialStars: Star[] = [];
       
       for (let i = 0; i < starCount; i++) {
@@ -61,7 +61,10 @@ const StarrySky: React.FC = () => {
       setDimensions({ width, height });
     };
     
-    generateInitialStars();
+    // 确保在DOM挂载后执行
+    if (typeof window !== 'undefined') {
+      generateInitialStars();
+    }
     
     // 浏览器调整大小时更新星星数量
     const handleResize = () => {
@@ -70,7 +73,7 @@ const StarrySky: React.FC = () => {
       setDimensions({ width, height });
       
       // 更新星星数量
-      const starCount = Math.floor((width * height) / 800);
+      const starCount = Math.floor((width * height) / 600);
       
       // 如果当前星星数不足，添加更多
       if (stars.length < starCount) {
@@ -89,13 +92,15 @@ const StarrySky: React.FC = () => {
       }
     };
     
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, [stars.length]);
 
   // 生成流星
   useEffect(() => {
-    if (dimensions.width === 0) return;
+    if (dimensions.width === 0 || typeof window === 'undefined') return;
     
     // 初始化流星数组
     const initialMeteors: Meteor[] = Array(5).fill(null).map((_, i) => ({
@@ -155,15 +160,20 @@ const StarrySky: React.FC = () => {
   return (
     <div 
       ref={containerRef} 
-      className="fixed inset-0 bg-black overflow-hidden z-0"
-      style={{ perspective: '1000px' }}
+      className="fixed inset-0 overflow-hidden z-[-1]"
+      style={{ 
+        background: '#000',
+        perspective: '1000px',
+        willChange: 'transform'
+      }}
       data-testid="starry-sky"
+      aria-hidden="true"
     >
       {/* 星星 */}
       {stars.map(star => (
         <motion.div
           key={star.id}
-          className="absolute rounded-full bg-white"
+          className="absolute rounded-full bg-white will-change-transform"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
@@ -186,7 +196,7 @@ const StarrySky: React.FC = () => {
         meteor.active && (
           <motion.div
             key={`meteor-${meteor.id}`}
-            className="absolute"
+            className="absolute will-change-transform"
             style={{
               left: `${meteor.startX}%`,
               top: `${meteor.startY}%`,
