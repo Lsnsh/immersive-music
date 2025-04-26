@@ -1,0 +1,20 @@
+{
+  "name": "immersive-music",
+  "version": "1.0.0",
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lsnsh/immersive-music.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lsnsh/immersive-music/issues"
+  },
+  "homepage": "https://github.com/Lsnsh/immersive-music#readme",
+  "description": ""
+}
