@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Howl } from 'howler';
-import songs, { Song } from '@/data/songs';
+import songs from '@/data/songs';
 
 interface MusicPlayerProps {
   initialVolume?: number;
