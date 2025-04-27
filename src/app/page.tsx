@@ -52,28 +52,38 @@ export default function Home() {
     setShowStartButton(false);
   };
 
+  // 检测是否为移动设备
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="min-h-screen overflow-hidden relative">
       {/* 星空背景 */}
       <StarrySky />
       
       {/* 中央内容 - 使用相对定位避免覆盖背景 */}
-      <div className="relative flex flex-col items-center justify-center h-screen p-8">
+      <div className="relative flex flex-col items-center justify-center h-screen p-4 md:p-8">
         {showStartButton ? (
           <button 
             onClick={handleStart}
-            className="bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full px-10 py-4 text-xl font-bold transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-full px-8 py-4 text-lg md:text-xl font-bold transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg"
           >
             开始体验
           </button>
         ) : (
           <>
-            <h1 className="text-white text-4xl md:text-6xl font-bold mb-4 text-center">
+            <h1 className="text-white text-3xl md:text-6xl font-bold mb-4 text-center">
               沉浸式音乐体验
             </h1>
-            <p className="text-white/80 text-lg md:text-xl text-center max-w-2xl">
+            <p className="text-white/80 text-base md:text-xl text-center max-w-lg md:max-w-2xl">
               在星空下，聆听美妙音乐，享受宁静时刻
             </p>
+            
+            {/* 提示信息 - 仅在移动端显示 */}
+            {isMobile && (
+              <div className="mt-8 text-white/70 text-xs text-center max-w-xs bg-black/30 p-3 rounded-lg backdrop-blur-sm">
+                提示：旋转手机获得更佳体验，或使用耳机聆听
+              </div>
+            )}
           </>
         )}
       </div>

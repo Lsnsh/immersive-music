@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, memo, useEffect } from "react";
+import { useRef, memo, useEffect, useState } from "react";
 import Stars from "./Stars";
 import Meteors from "./Meteors";
 import { useStarrySky } from "@/hooks/useStarrySky";
@@ -8,37 +8,66 @@ import { useStarrySky } from "@/hooks/useStarrySky";
 const StarrySky: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { stars, meteors, setMeteorsState } = useStarrySky();
+  const [isVisible, setIsVisible] = useState(true);
 
-  // 开发模式下检查状态
+  // 检测可见性，提高性能
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      console.log("StarrySky rendered with stars count:", stars.length);
+    if (typeof window === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
-  }, [stars.length]);
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
+  // 适配移动端和桌面端
+  const bgStyle = {
+    background: "linear-gradient(to bottom, #000000, #050523, #090931)",
+    perspective: "1000px",
+    width: "100vw",
+    height: "100vh",
+    willChange: "transform",
+    backfaceVisibility: "hidden" as const,
+    zIndex: 0,
+    pointerEvents: "none" as const,
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflowX: "hidden" as const,
+    overflowY: "hidden" as const,
+  };
 
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 overflow-hidden"
-      style={{
-        background: "linear-gradient(to bottom, #000000, #050523, #090931)",
-        perspective: "1000px",
-        width: "100vw",
-        height: "100vh",
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        zIndex: 0,
-        pointerEvents: "none",
-      }}
+      style={bgStyle}
       data-testid="starry-sky"
       aria-hidden="true"
     >
-      {/* 星星容器 */}
-      {/* 流星容器 */}
-      <div className="absolute top-0 bottom-0 left-0 right-0 inset-0">
-        <Stars stars={stars} />
-        <Meteors meteors={meteors} onMeteorComplete={setMeteorsState} />
-      </div>
+      {/* 仅在可见时渲染星星和流星，优化性能 */}
+      {isVisible && (
+        <div className="absolute inset-0">
+          <Stars stars={stars} />
+          <Meteors meteors={meteors} onMeteorComplete={setMeteorsState} />
+        </div>
+      )}
     </div>
   );
 };

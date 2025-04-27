@@ -7,9 +7,13 @@ interface StarsProps {
 }
 
 const Stars: React.FC<StarsProps> = ({ stars }) => {
+  // 限制星星数量，确保移动端性能
+  const maxStars = typeof window !== 'undefined' && window.innerWidth < 768 ? 100 : 200;
+  const visibleStars = stars.slice(0, maxStars);
+  
   return (
     <>
-      {stars.map(star => (
+      {visibleStars.map(star => (
         <motion.div
           key={star.id}
           className="absolute rounded-full bg-white shadow-glow"

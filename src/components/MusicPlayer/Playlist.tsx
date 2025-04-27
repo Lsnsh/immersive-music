@@ -10,55 +10,80 @@ interface PlaylistProps {
 }
 
 const Playlist: React.FC<PlaylistProps> = ({ songs, currentSongIndex, playSong, onClose }) => {
+  // 检测是否为移动设备
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
-    <motion.div 
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: 100, opacity: 0 }}
-      className="fixed bottom-16 left-0 right-0 z-30 bg-black/80 backdrop-blur-lg p-4 border-t border-white/10 max-h-72 overflow-y-auto rounded-t-xl mx-2 mb-1 shadow-lg"
+    <motion.div
+      className="fixed inset-0 z-30 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
     >
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-white font-bold text-base">播放列表</h3>
-        <button 
-          onClick={onClose}
-          className="text-white/70 hover:text-white"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-      <div className="flex flex-col gap-1">
-        {songs.map((song, index) => (
-          <div 
-            key={song.id}
-            className={`flex items-center p-2 rounded-lg cursor-pointer ${
-              currentSongIndex === index 
-                ? 'bg-white/20 text-white' 
-                : 'hover:bg-white/10 text-white/70'
-            }`}
-            onClick={() => playSong(index)}
+      <motion.div
+        className="relative bg-black/80 backdrop-blur-lg border border-white/10 rounded-t-xl md:rounded-xl w-full md:w-auto md:max-w-lg max-h-[70vh] overflow-hidden"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 100, opacity: 0 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* 标题栏 */}
+        <div className="flex justify-between items-center p-4 border-b border-white/10">
+          <h3 className="text-white font-medium">播放列表</h3>
+          <button 
+            className="text-white/70 hover:text-white"
+            onClick={onClose}
+            aria-label="关闭播放列表"
           >
-            <div className="w-8 h-8 flex items-center justify-center mr-3">
-              {currentSongIndex === index ? (
-                <div className="flex gap-[2px] items-center">
-                  <span className="w-[3px] h-6 bg-white/80 animate-music-bar-1"></span>
-                  <span className="w-[3px] h-5 bg-white/80 animate-music-bar-2"></span>
-                  <span className="w-[3px] h-4 bg-white/80 animate-music-bar-3"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+              <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* 歌曲列表 */}
+        <div className="overflow-y-auto max-h-[calc(70vh-60px)]">
+          <ul className="divide-y divide-white/10">
+            {songs.map((song, index) => (
+              <li 
+                key={song.id}
+                className={`px-4 py-3 hover:bg-white/5 cursor-pointer transition-colors ${index === currentSongIndex ? 'bg-white/10' : ''}`}
+                onClick={() => {
+                  playSong(index);
+                  if (isMobile) onClose(); // 在移动端点击后自动关闭
+                }}
+              >
+                <div className="flex items-center">
+                  {/* 播放状态指示器 */}
+                  <div className="flex-none w-8 h-8 flex items-center justify-center">
+                    {index === currentSongIndex ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
+                        <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06z" />
+                      </svg>
+                    ) : (
+                      <span className="text-white/50">{index + 1}</span>
+                    )}
+                  </div>
+                  
+                  {/* 歌曲信息 */}
+                  <div className="ml-2 flex-grow">
+                    <div className="text-white font-medium text-sm">{song.title}</div>
+                    <div className="text-white/60 text-xs">{song.artist}</div>
+                  </div>
+                  
+                  {/* 时长（如果有） */}
+                  {song.duration && (
+                    <div className="text-white/60 text-xs">
+                      {Math.floor(song.duration / 60)}:{Math.floor(song.duration % 60).toString().padStart(2, '0')}
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 6L21 12L9 18V6Z" fill="currentColor"/>
-                </svg>
-              )}
-            </div>
-            <div className="flex-1 truncate">
-              <p className="font-medium text-sm truncate">{song.title}</p>
-              <p className="text-xs opacity-80 truncate">{song.artist}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
     </motion.div>
   );
 };
